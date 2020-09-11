@@ -1,4 +1,6 @@
 #!/bin/bash
+# Criar os diretórios para a chave e o certificado.
+mkdir -p ../docker/php-fpm/ssl/private ../docker/php-fpm/ssl/certs
 # Gerar a chave privada.
 openssl genrsa -aes128 -out ../docker/php-fpm/ssl/private/server.key 2048
 # Remover a senha da chave privada.
