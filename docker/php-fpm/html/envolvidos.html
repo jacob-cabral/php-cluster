@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Envolvidos</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <h1>Cadastro de Acidente</h1>
+    <hr>
+    <div>
+      <form action="/acidente.php" method="post">
+        <h2>Detalhes do Acidente</h2>
+        <div>
+          <label for="ocorrencia">Ocorrência:</label> <input name="ocorrencia" placeholder="Informe a ocorrência...">
+        </div>
+        <div>
+          <label for="ocorrencia">Data:</label> <input name="data" type="date" placeholder="Informe a data...">
+        </div>
+
+        <h2>Envolvidos no Acidente</h2>
+        <div>
+          <ol id="envolvidos"></ol>
+        </div>
+        <div id="envolvidosSerializados"></div>
+        <fieldset>
+          <div>
+            <label for="nomeCompleto">Nome completo:</label> <input id="nomeCompleto" placeholder="Informe o nome completo...">
+          </div>
+          <div>
+            <label for="cpf">CPF:</label> <input id="cpf" placeholder="Informe o CPF...">
+          </div>
+          <div>
+            <input type="button" onclick="adicionarEnvolvido()" value="Adicionar Envolvido">
+          </div>
+        </fieldset>
+        <div>
+          <button type="reset">Cancelar</button>
+          <button type="submit">Salvar Acidente</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      let envolvidos = [];
+
+      // Serializa o envolvido, criando campos escondidos nomeados a partir de suas propriedades, contendo os valores dessas.
+      function serializarEnvolvido(envolvido) {
+        let indice = envolvidos.findIndex(e => e.cpf === envolvido.cpf);
+        let camposEscondidos = [];
+        for (const [propriedade, valor] of Object.entries(envolvido)) {
+          let campoEscondido = document.createElement("input");
+          campoEscondido.setAttribute("type", "hidden");
+          campoEscondido.setAttribute("name", `${propriedade}_${indice}`);
+          campoEscondido.setAttribute("value", valor);
+          camposEscondidos.push(campoEscondido);
+        }
+        return camposEscondidos;
+      }
+
+      function imprimirEnvolvidos() {
+        // Obtém a referência para a lista ordenada e remove todos os seus itens.
+        let ol = document.getElementById("envolvidos");
+        ol.replaceChildren();
+        // Obtém a referência para o contêiner de envolvidos serializados por meio de campos escondidos.
+        let div = document.getElementById("envolvidosSerializados");
+        div.replaceChildren();
+        // Adiciona cada envolvido como item da lista ordenada e o serializa por meio de campos escondidos.
+        envolvidos.forEach(envolvido => {
+            let li = document.createElement("li");
+            li.setAttribute("id", envolvido.cpf);
+            li.append(document.createTextNode(`${envolvido.nomeCompleto} (${envolvido.cpf})`));
+            ol.append(li);
+            serializarEnvolvido(envolvido).forEach(campoEscondido => div.appendChild(campoEscondido));
+        });
+      }
+
+      function adicionarEnvolvido() {
+        // Obtém as referências para os componentes de entrada de dados.
+        let campoNomeCompleto = document.getElementById('nomeCompleto');
+        let campoCpf = document.getElementById('cpf');
+        // Constrói o objeto envolvido e o atribui a lista de envolvidos.
+        let envolvido = {
+          nomeCompleto: campoNomeCompleto.value,
+          cpf: campoCpf.value
+        };
+        envolvidos.push(envolvido);
+        // Exclui os valores preenchidos nos componentes de entrada de dados.
+        campoNomeCompleto.value = "";
+        campoCpf.value = "";
+        // Imprimir os envolvidos.
+        imprimirEnvolvidos();
+      }
+    </script>
+  </body>
+</html>
