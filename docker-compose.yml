@@ -5,7 +5,8 @@ services:
     image: 'php-fpm'
     build: ./docker/php-fpm
     environment:
-      - PHP_SESSION_SAVE_PATH=tcp://redis:6379?auth=umasenhamuitocomplexa
+      PHP_SESSION_SAVE_PATH: 'tcp://redis:6379?auth=umasenhamuitocomplexa'
+      XDEBUG_SESSION: 1
     volumes:
       - './docker/php-fpm/html:/var/www/html'
     ports:
